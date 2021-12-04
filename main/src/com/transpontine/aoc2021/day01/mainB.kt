@@ -2,17 +2,22 @@ package com.transpontine.aoc2021.day01
 
 import java.io.File
 
-fun process(fileName: String) {
+private fun process(fileName: String) {
     println("Processing $fileName")
-    var previousLine: Int? = null
+    val window = IntWindow(3)
+    var previousSum: Int? = null
     var increases = 0
     File(fileName).forEachLine { line ->
         val currentLine = line.toInt()
-        if (previousLine?.let { it < currentLine } == true) {
+
+        window.add(currentLine)
+        val currentSum = window.sum
+
+        if (currentSum != null && previousSum?.let { it < currentSum } == true ) {
             increases += 1
         }
 
-        previousLine = currentLine
+        previousSum = currentSum
     }
 
     println("Increases: $increases")
