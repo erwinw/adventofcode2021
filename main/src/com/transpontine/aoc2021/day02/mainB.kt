@@ -6,15 +6,19 @@ private fun process(fileName: String) {
     println("Processing $fileName")
     var horizontal = 0
     var depth = 0
+    var aim = 0
 
     File(fileName).forEachLine { line ->
         val (command, argStr) = line.split(" ", limit = 2)
         val arg = argStr.toInt()
 
         when (command) {
-            Command.DOWN.value -> depth += arg
-            Command.UP.value -> depth -= arg
-            Command.FORWARD.value -> horizontal += arg
+            Command.DOWN.value -> aim += arg
+            Command.UP.value -> aim -= arg
+            Command.FORWARD.value -> {
+                horizontal += arg
+                depth += aim * arg
+            }
         }
     }
 
