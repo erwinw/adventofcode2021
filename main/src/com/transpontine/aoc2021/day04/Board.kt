@@ -15,6 +15,7 @@ class Board(lines: List<String>) {
         }
 
     fun pickChip(chip: Byte) {
+        val previousBingo = hasBingo
         cells.forEach { row ->
             row.forEach { cell ->
                 if (cell.number == chip) {
@@ -22,23 +23,30 @@ class Board(lines: List<String>) {
                 }
             }
         }
+        hasBingo = calculateHasBingo()
+        justGotBingo = hasBingo && !previousBingo
     }
 
-    val hasBingo: Boolean
-        get() {
-            cells.forEach { row ->
-                if (row.all { it.taken }) {
-                    return true
-                }
-            }
-            for (colIdx in 0 until cells[0].size) {
-                if (cells.all { it[colIdx].taken }) {
-                    return true
-                }
-            }
+    var justGotBingo = false
+        private set
 
-            return false
+    var hasBingo = false
+        private set
+
+    private fun calculateHasBingo(): Boolean {
+        cells.forEach { row ->
+            if (row.all { it.taken }) {
+                return true
+            }
         }
+        for (colIdx in 0 until cells[0].size) {
+            if (cells.all { it[colIdx].taken }) {
+                return true
+            }
+        }
+
+        return false
+    }
 
     fun sumLeft() =
         cells.fold(0) { accRow, row ->
