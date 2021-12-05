@@ -2,7 +2,7 @@ package com.transpontine.aoc2021.day01
 
 import java.io.File
 
-private fun process(fileName: String) {
+private fun processA(fileName: String) {
     println("Processing $fileName")
     var previousLine: Int? = null
     var increases = 0
@@ -22,5 +22,5 @@ fun main(args: Array<String>) {
     if (args.size != 1) {
         throw Error("Do not forget to pass in an input filename!")
     }
-    process(args[0])
+    processA(args[0])
 }
