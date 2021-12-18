@@ -1,6 +1,6 @@
 package com.transpontine.aoc2021.day14
 
-fun Polymer.applyRules(rules: Rules): Polymer =
+private fun PolymerA.applyRules(rules: RulesA): PolymerA =
     windowed(2, partialWindows = true) { window -> //(pre, post) ->
         if (window.size == 1) {
             return@windowed window
@@ -18,14 +18,15 @@ fun Polymer.applyRules(rules: Rules): Polymer =
 
 private fun process(fileName: String) {
     println("Processing $fileName")
-    val (template, rules) = readInput(fileName)
+    val (template, rules) = readInputA(fileName)
 
-    val output = List(10) { it }
-        .fold(template) { acc, idx ->
-            acc.applyRules(rules).also {
-                println("$idx > ${it.size}")
+    val output =
+        (0 until 10)
+            .fold(template) { acc, _ ->
+                acc.applyRules(rules).also {
+                    println("> ${it.size}")
+                }
             }
-        }
     val charCounts = output.groupBy { it }
         .mapValues { (_, characters) -> characters.size }
         .toList()
