@@ -9,6 +9,39 @@ data class Point(val x: Int, val y: Int)
 val Cave.maxX get() = first().size - 1
 val Cave.maxY get() = size - 1
 
+fun Cave.expand(times: Int): Cave {
+    val oldMaxX = maxX
+    val oldMaxY = maxY
+    val oldDimX = oldMaxX + 1
+    val oldDimY = oldMaxY + 1
+    val newDimX = oldDimX * times
+    val newDimY = oldDimY * times
+
+    val newCave = Array(newDimY) { IntArray(newDimX) }
+
+    for (y in 0..oldMaxY) {
+        for (x in 0..oldMaxX) {
+            val value = this[y][x]
+            repeat(times) { repY ->
+                val newY = repY * oldDimY + y
+                repeat(times) { repX ->
+                    val newX = repX * oldDimX + x
+
+                    // We cannot use modulo; after 9 comes 1, not 0
+                    // I'm sure I can come up with a neat way of doing this using a modulo 8 - but this works too.
+                    var rawNewValue = value + repY + repX
+                    while (rawNewValue > 9) {
+                        rawNewValue -= 9
+                    }
+                    newCave[newY][newX] = rawNewValue
+                }
+            }
+        }
+    }
+
+    return newCave
+}
+
 class Traversal(
     val point: Point,
     val totalRisk: Int,
