@@ -1,6 +1,5 @@
 package com.transpontine.aoc2021.day17
 
-import java.lang.Integer.MIN_VALUE
 import java.lang.Integer.max
 
 private var abortCount = 0
@@ -47,22 +46,19 @@ private fun calculateScore(velocity: Velocity, target: Ranges): Int? {
 private fun process(fileName: String) {
     println("Processing $fileName")
     val target = readInput(fileName)
-    val maxInitialVelocity = target.x.minOf { it }
-    var winnerVelocity = Velocity(-1, -1)
-    var winnerScore = MIN_VALUE
-    for (y in 0 until maxInitialVelocity) {
-        for (x in 0 until maxInitialVelocity) {
+    val maxInitialVelocity = target.x.maxOf { it }
+    var hitCount = 0
+    for (y in -2 * maxInitialVelocity until maxInitialVelocity * 2) {
+        for (x in 0 until maxInitialVelocity*2) {
             val velocity = Velocity(x, y)
             val score = calculateScore(velocity, target)
-            if (score != null && score > winnerScore) {
-                println("New winner: $score -> $winnerScore; $velocity")
-                winnerScore = score
-                winnerVelocity = velocity
+            if (score != null) {
+                hitCount +=1
             }
         }
     }
     println("Abort count: $abortCount")
-    println("New winner: $winnerScore; $winnerVelocity")
+    println("Hit count: $hitCount")
 }
 
 fun main(args: Array<String>) {
