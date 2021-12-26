@@ -8,7 +8,7 @@ interface SnailFishNumber {
     var parent: SnailFishComplexNumber?
 
     operator fun plus(nextNumber: SnailFishNumber) =
-        SnailFishComplexNumber(parent, this, nextNumber)
+        SnailFishComplexNumber(parent, clone(), nextNumber.clone())
             .also {
                 it.left.parent = it
                 it.right.parent = it
@@ -16,6 +16,7 @@ interface SnailFishNumber {
             .reduce()
 
     fun reduce(once: Boolean = false): SnailFishNumber
+    fun clone(): SnailFishNumber
     fun toComplexString(): String
     fun toPlainString(): String
     fun magnitude(): Int
@@ -30,6 +31,7 @@ class SnailFishDigitNumber(
     override fun toPlainString() = digit.toString()
 
     override fun reduce(once: Boolean) = this
+    override fun clone() = SnailFishDigitNumber(null, digit)
 
     fun split() = SnailFishComplexNumber(
         parent,
@@ -77,6 +79,15 @@ class SnailFishComplexNumber(
         return this
     }
 
+    override fun clone() = SnailFishComplexNumber(
+        parent = null,
+        left.clone(),
+        right.clone(),
+    ).also {
+        it.left.parent = it
+        it.right.parent = it
+    }
+
     private fun explodeLeftDigit() {
         // until we find a `left`, go up the tree
         var leftParent: SnailFishNumber? = parent?.left ?: return
@@ -92,9 +103,7 @@ class SnailFishComplexNumber(
                 rightDigit = rightDigit.right
             }
             if (rightDigit is SnailFishDigitNumber) {
-                val sourceDigit = rightDigit.digit
                 rightDigit.digit += (left as SnailFishDigitNumber).digit
-                // println("Explode left, adding $sourceDigit + ${left.toPlainString()} ==> ${rightDigit.digit}")
             }
         }
     }
@@ -107,7 +116,7 @@ class SnailFishComplexNumber(
             prevParent = prevParent?.parent
             rightParent = prevParent?.parent?.right
         }
-        // println("Finding right or parent: $this -> $rightParent")
+
         // until we find a digit, go down the tree towards the left
         if (rightParent != null) {
             var leftDigit = rightParent
@@ -115,9 +124,7 @@ class SnailFishComplexNumber(
                 leftDigit = leftDigit.left
             }
             if (leftDigit is SnailFishDigitNumber) {
-                val sourceDigit = leftDigit.digit
                 leftDigit.digit += (right as SnailFishDigitNumber).digit
-                // println("Explode right, adding $sourceDigit + ${right.toPlainString()} ==> ${leftDigit.digit}")
             }
         }
     }
@@ -135,7 +142,6 @@ class SnailFishComplexNumber(
         }
 
         val target = recurseFindTarget(4) ?: return false
-        // println("Exploding $target")
 
         // left
         target.explodeLeftDigit()
